@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weekly Study Tracker | Notion-Style</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans Arabic', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .notion-scroll::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    .notion-scroll::-webkit-scrollbar-thumb {
+      background-color: #d1d5db;
+      border-radius: 9999px;
+    }
+    .dark .notion-scroll::-webkit-scrollbar-thumb {
+      background-color: #4b5563;
+    }
+    .checkbox-custom {
+      transition: all 0.15s ease-in-out;
+    }
+    .checkbox-custom:checked {
+      background-color: #2563eb;
+      border-color: #2563eb;
+    }
+    /* Notion tag styling */
+    .notion-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.25rem;
+    }
+  </style>
+</head>
+<body class="bg-[#fbfbfa] text-[#37352f] dark:bg-[#191919] dark:text-[#d4d4d4] transition-colors duration-200 min-h-screen">
+
+  <!-- Main Container -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-20">
+
+    <!-- Notion-Style Top Cover & Header -->
+    <header class="relative mb-8 rounded-xl bg-gradient-to-r from-stone-100 via-amber-50/50 to-orange-50/40 dark:from-[#202020] dark:via-[#252525] dark:to-[#1e1e1e] p-6 border border-stone-200/70 dark:border-[#2f2f2f] shadow-sm">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        
+        <!-- Page Title & Icon -->
+        <div class="flex items-start gap-4">
+          <div class="w-14 h-14 rounded-xl bg-white dark:bg-[#2b2b2b] shadow-sm border border-stone-200/80 dark:border-[#383838] flex items-center justify-center text-3xl select-none flex-shrink-0">
+            📚
+          </div>
+          <div>
+            <div class="flex items-center gap-2 flex-wrap mb-1">
+              <span class="text-xs font-semibold uppercase tracking-wider text-stone-500 dark:text-stone-400">Semester 1 • Academic & Skills Tracker</span>
+              <span class="inline-block w-1 h-1 rounded-full bg-stone-300 dark:bg-stone-600"></span>
+              <span class="text-xs px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300 font-medium">Week Active</span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-stone-900 dark:text-white flex items-center gap-2 flex-wrap">
+              <span>Weekly Study Tracker</span>
+              <span class="text-lg font-normal text-stone-500 dark:text-stone-400 font-arabic">(مخطط الدراسة الأسبوعي)</span>
+            </h1>
+            <p class="text-sm text-stone-600 dark:text-stone-400 mt-1 max-w-2xl">
+              Track daily progress, logged hours, and focus sessions across your 5 core university modules plus Python programming.
+            </p>
+          </div>
+        </div>
+
+        <!-- Header Actions: Dark Mode, New Module, Reset -->
+        <div class="flex items-center gap-2 self-start md:self-center flex-wrap">
+          <button id="themeToggleBtn" type="button" class="p-2.5 rounded-lg border border-stone-200 dark:border-[#333] bg-white dark:bg-[#252525] text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-[#2f2f2f] shadow-sm transition" title="Toggle theme">
+            <span id="themeIcon">🌙</span>
+          </button>
+          <button id="openTimerBtn" type="button" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-amber-300 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200 text-sm font-medium hover:bg-amber-100 dark:hover:bg-amber-900/50 shadow-sm transition">
+            <span>⏱️</span>
+            <span>Focus Timer</span>
+          </button>
+          <button id="addModuleBtn" type="button" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 text-sm font-medium hover:bg-stone-800 dark:hover:bg-white shadow-sm transition">
+            <span>+</span>
+            <span>New Subject</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Scoreboard -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-stone-200/70 dark:border-[#2f2f2f]">
+        <div class="bg-white/70 dark:bg-[#252525]/70 backdrop-blur rounded-lg p-3 border border-stone-200/60 dark:border-[#333]">
+          <div class="text-xs text-stone-500 dark:text-stone-400 font-medium">Overall Progress</div>
+          <div class="flex items-baseline gap-2 mt-1">
+            <span id="metricProgressPercent" class="text-xl font-bold text-stone-900 dark:text-white">0%</span>
+            <span id="metricCompletedTasks" class="text-xs text-stone-500 dark:text-stone-400">0/0 sessions</span>
+          </div>
+          <div class="w-full bg-stone-100 dark:bg-[#333] h-1.5 rounded-full mt-2 overflow-hidden">
+            <div id="metricProgressBar" class="bg-blue-600 h-1.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <div class="bg-white/70 dark:bg-[#252525]/70 backdrop-blur rounded-lg p-3 border border-stone-200/60 dark:border-[#333]">
+          <div class="text-xs text-stone-500 dark:text-stone-400 font-medium">Hours Studied</div>
+          <div class="flex items-baseline gap-1.5 mt-1">
+            <span id="metricLoggedHours" class="text-xl font-bold text-stone-900 dark:text-white">0.0h</span>
+            <span id="metricTargetHours" class="text-xs text-stone-500 dark:text-stone-400">/ 28h goal</span>
+          </div>
+          <div class="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium mt-1" id="metricHoursRemain">28.0h remaining</div>
+        </div>
+
+        <div class="bg-white/70 dark:bg-[#252525]/70 backdrop-blur rounded-lg p-3 border border-stone-200/60 dark:border-[#333]">
+          <div class="text-xs text-stone-500 dark:text-stone-400 font-medium">Active Days</div>
+          <div class="flex items-baseline gap-1.5 mt-1">
+            <span id="metricActiveDays" class="text-xl font-bold text-stone-900 dark:text-white">0 / 7</span>
+            <span class="text-xs text-stone-500 dark:text-stone-400">days</span>
+          </div>
+          <div class="text-[11px] text-stone-500 dark:text-stone-400 mt-1" id="metricTopDay">Ready to start</div>
+        </div>
+
+        <div class="bg-white/70 dark:bg-[#252525]/70 backdrop-blur rounded-lg p-3 border border-stone-200/60 dark:border-[#333]">
+          <div class="text-xs text-stone-500 dark:text-stone-400 font-medium">Completed Modules</div>
+          <div class="flex items-baseline gap-1.5 mt-1">
+            <span id="metricDoneCount" class="text-xl font-bold text-stone-900 dark:text-white">0</span>
+            <span id="metricTotalCount" class="text-xs text-stone-500 dark:text-stone-400">/ 6 subjects</span>
+          </div>
+          <div class="text-[11px] text-blue-600 dark:text-blue-400 font-medium mt-1" id="metricInProgressCount">6 in progress</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Notion View Navigation & Filters -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+      <!-- Tabs (Table, Board, Schedule) -->
+      <div class="inline-flex p-1 rounded-lg bg-stone-200/60 dark:bg-[#232323] border border-stone-200 dark:border-[#333] text-sm">
+        <button id="viewTableBtn" type="button" class="view-tab-btn px-3 py-1.5 rounded-md font-medium text-stone-900 dark:text-white bg-white dark:bg-[#2c2c2c] shadow-sm transition flex items-center gap-1.5">
+          <span>📋</span>
+          <span>Table View</span>
+        </button>
+        <button id="viewBoardBtn" type="button" class="view-tab-btn px-3 py-1.5 rounded-md font-medium text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition flex items-center gap-1.5">
+          <span>🗂️</span>
+          <span>Status Board</span>
+        </button>
+        <button id="viewScheduleBtn" type="button" class="view-tab-btn px-3 py-1.5 rounded-md font-medium text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition flex items-center gap-1.5">
+          <span>📅</span>
+          <span>Weekly Schedule</span>
+        </button>
+      </div>
+
+      <!-- Action controls: Filter, Search, Reset -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <div class="relative">
+          <input id="searchInput" type="text" placeholder="Filter subjects..." class="pl-8 pr-3 py-1.5 text-xs rounded-lg border border-stone-200 dark:border-[#333] bg-white dark:bg-[#202020] text-stone-800 dark:text-stone-200 placeholder-stone-400 focus:outline-none focus:ring-1 focus:ring-stone-400 w-44 sm:w-52">
+          <span class="absolute left-2.5 top-2 text-xs text-stone-400">🔍</span>
+        </div>
+        <button id="resetWeekBtn" type="button" class="px-2.5 py-1.5 text-xs font-medium rounded-lg border border-stone-200 dark:border-[#333] bg-white dark:bg-[#202020] text-stone-600 dark:text-stone-400 hover:text-red-600 dark:hover:text-red-400 hover:border-red-200 transition flex items-center gap-1">
+          <span>🔄</span>
+          <span>Reset Week</span>
+        </button>
+        <button id="exportDataBtn" type="button" class="px-2.5 py-1.5 text-xs font-medium rounded-lg border border-stone-200 dark:border-[#333] bg-white dark:bg-[#202020] text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition flex items-center gap-1">
+          <span>📥</span>
+          <span>Export</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- VIEW 1: TABLE VIEW -->
+    <div id="tableView" class="view-container">
+      <div class="bg-white dark:bg-[#202020] border border-stone-200 dark:border-[#2f2f2f] rounded-xl shadow-sm overflow-hidden">
+        <div class="overflow-x-auto notion-scroll">
+          <table class="w-full text-left border-collapse text-xs sm:text-sm">
+            <thead>
+              <tr class="bg-stone-50/80 dark:bg-[#242424] border-b border-stone-200 dark:border-[#2f2f2f] text-stone-500 dark:text-stone-400 font-medium">
+                <th class="py-3 px-4 w-72 min-w-[220px]">Module / المادة</th>
+                <th class="py-3 px-3 w-28 min-w-[110px]">Status</th>
+                <th class="py-3 px-3 w-24 text-center">Target</th>
+                <th class="py-3 px-2 text-center w-10">Mon</th>
+                <th class="py-3 px-2 text-center w-10">Tue</th>
+                <th class="py-3 px-2 text-center w-10">Wed</th>
+                <th class="py-3 px-2 text-center w-10">Thu</th>
+                <th class="py-3 px-2 text-center w-10">Fri</th>
+                <th class="py-3 px-2 text-center w-10">Sat</th>
+                <th class="py-3 px-2 text-center w-10">Sun</th>
+                <th class="py-3 px-3 w-32 text-center min-w-[120px]">Logged Hours</th>
+                <th class="py-3 px-3 w-36 min-w-[140px]">Progress</th>
+                <th class="py-3 px-3 w-28 text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="modulesTableBody" class="divide-y divide-stone-100 dark:divide-[#292929]">
+              <!-- Injected by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Table Footer / Add Row Bar -->
+        <div class="p-3 bg-stone-50/50 dark:bg-[#222] border-t border-stone-200/80 dark:border-[#2f2f2f] flex items-center justify-between text-xs text-stone-500 dark:text-stone-400">
+          <button id="tableAddRowBtn" type="button" class="hover:text-stone-800 dark:hover:text-stone-200 font-medium flex items-center gap-1.5 transition">
+            <span class="text-sm font-bold">+</span>
+            <span>Add subject to tracker</span>
+          </button>
+          <div id="tableSummaryCount" class="text-stone-400 dark:text-stone-500">
+            6 modules tracked
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 2: KANBAN BOARD VIEW -->
+    <div id="boardView" class="view-container hidden">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <!-- Not Started Column -->
+        <div class="bg-stone-100/70 dark:bg-[#202020] rounded-xl p-3 border border-stone-200/80 dark:border-[#2f2f2f]">
+          <div class="flex items-center justify-between mb-3 px-1">
+            <div class="flex items-center gap-2">
+              <span class="notion-tag bg-stone-200 text-stone-700 dark:bg-stone-800 dark:text-stone-300">Not Started</span>
+              <span id="colCountNotStarted" class="text-xs text-stone-400 font-medium">0</span>
+            </div>
+          </div>
+          <div id="boardColNotStarted" class="space-y-3 min-h-[220px]">
+            <!-- Injected Cards -->
+          </div>
+        </div>
+
+        <!-- In Progress Column -->
+        <div class="bg-stone-100/70 dark:bg-[#202020] rounded-xl p-3 border border-stone-200/80 dark:border-[#2f2f2f]">
+          <div class="flex items-center justify-between mb-3 px-1">
+            <div class="flex items-center gap-2">
+              <span class="notion-tag bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300">In Progress</span>
+              <span id="colCountInProgress" class="text-xs text-stone-400 font-medium">0</span>
+            </div>
+          </div>
+          <div id="boardColInProgress" class="space-y-3 min-h-[220px]">
+            <!-- Injected Cards -->
+          </div>
+        </div>
+
+        <!-- Reviewing Column -->
+        <div class="bg-stone-100/70 dark:bg-[#202020] rounded-xl p-3 border border-stone-200/80 dark:border-[#2f2f2f]">
+          <div class="flex items-center justify-between mb-3 px-1">
+            <div class="flex items-center gap-2">
+              <span class="notion-tag bg-purple-100 text-purple-800 dark:bg-purple-950/60 dark:text-purple-300">Reviewing / TD</span>
+              <span id="colCountReviewing" class="text-xs text-stone-400 font-medium">0</span>
+            </div>
+          </div>
+          <div id="boardColReviewing" class="space-y-3 min-h-[220px]">
+            <!-- Injected Cards -->
+          </div>
+        </div>
+
+        <!-- Completed Column -->
+        <div class="bg-stone-100/70 dark:bg-[#202020] rounded-xl p-3 border border-stone-200/80 dark:border-[#2f2f2f]">
+          <div class="flex items-center justify-between mb-3 px-1">
+            <div class="flex items-center gap-2">
+              <span class="notion-tag bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">Completed</span>
+              <span id="colCountCompleted" class="text-xs text-stone-400 font-medium">0</span>
+            </div>
+          </div>
+          <div id="boardColCompleted" class="space-y-3 min-h-[220px]">
+            <!-- Injected Cards -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 3: WEEKLY SCHEDULE VIEW -->
+    <div id="scheduleView" class="view-container hidden">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3">
+        <!-- 7 Daily Cards -->
+        <div class="bg-white dark:bg-[#202020] rounded-xl p-3 border border-stone-200 dark:border-[#2f2f2f] shadow-sm">
+          <div class="flex items-center justify-between pb-2 mb-2 border-b border-stone-100 dark:border-[#2b2b2b]">
+            <span class="font-semibold text-xs text-stone-700 dark:text-stone-300">Monday</span>
+            <span id="dayCountMon" class="text-[11px] px-1.5 py-0.5 rounded bg-stone-100 dark:bg-[#282828] text-stone-500">0/6</span>
+          </div>
+          <div id="dayListMon" class="space-y-2"></div>
+        </div>
+
+        <div class="bg-white dark:bg-[#202020] rounded-xl p-3 border border-stone-200 dark:border-[#2f2f2f] shadow-sm">
+          <div class="flex items-center justify-between pb-2 mb-2 border-b border-stone-100 dark:border-[#2b2b2b]">
+            <span class="font-semibold text-xs text-stone-700 dark:text-stone-300">Tuesday</span>
+            <span id="dayCountTue" class="text-[11px] px-1.5 py-0.5 rounded bg-stone-100 dark:bg-[#282828] text-stone-500">0/6</span>
+          </div>
+          <div id="dayListTue" class="space-y-2"></div>
+        </div>
+
+        <div class="bg-white dark:bg-[#202020] rounded-xl p-3 border border-stone-200 dark:border-[#2f2f2f] shadow-sm">
+          <div class="flex items-center justify-between pb-2 mb-2 border-b border-stone-100 dark:border-[#2b2b2b]">
+            <span class="font-semibold text-xs text-stone-700 dark:text-stone-300">Wednesday</span>
+            <span id="dayCountWed" class="text-[11px] px-1.5 py-0.5 rounded bg-stone-100 dark:bg-[#282828] text-stone-500">0/6</span>
+          </div>
+          <div id="dayListWed" class="space-y-2"></div>
+        </div>
+
+        <div class="bg-white dark:bg-[#202020] rounded-xl p-3 border border-stone-200 dark:border-[#2f2f2f] shadow-sm">
+          <div class="flex items-center justify-between pb-2 mb-2 border-b border-stone-100 dark:border-[#2b2b2b]">
+            <span class="font-semibold text-xs text-stone-700 dark:text-stone-300">Thursday</span>
+            <span id="dayCountThu" class="text-[11px] px-1.5 py-0.5 rounded bg-stone-100 dark:bg-[#282828] text-stone-500">0/6</span>
+          </div>
+          <div id="dayListThu" class="space-y-2"></div>
+        </div>
+
+        <div class="bg-white dark:bg-[#202020] rounded-xl p-3 border border-stone-200 dark:border-[#2f2f2f] shadow-sm">
+          <div class="flex items-center justify-between pb-2 mb-2 border-b border-stone-100 dark:border-[#2b2b2b]">
+            <span class="font-semibold text-xs text-stone-700 dark:text-stone-300">Friday</span>
+            <span id="dayCountFri" class="text-[11px] px-1.5 py-0.5 rounded bg-stone-100 dark:bg-[#282828] text-stone-500">0/6</span>
+          </div>
+          <div id="dayListFri" class="space-y-2"></div>
+        </div>
+
+        <div class="bg-white dark:bg-[#202020] rounded-xl p-3 border border-stone-200 dark:border-[#2f2f2f] shadow-sm">
+          <div class="flex items-center justify-between pb-2 mb-2 border-b border-stone-100 dark:border-[#2b2b2b]">
+            <span class="font-semibold text-xs text-stone-700 dark:text-stone-300">Saturday</span>
+            <span id="dayCountSat" class="text-[11px] px-1.5 py-0.5 rounded bg-stone-100 dark:bg-[#282828] text-stone-500">0/6</span>
+          </div>
+          <div id="dayListSat" class="space-y-2"></div>
+        </div>
+
+        <div class="bg-white dark:bg-[#202020] rounded-xl p-3 border border-stone-200 dark:border-[#2f2f2f] shadow-sm">
+          <div class="flex items-center justify-between pb-2 mb-2 border-b border-stone-100 dark:border-[#2b2b2b]">
+            <span class="font-semibold text-xs text-stone-700 dark:text-stone-300">Sunday</span>
+            <span id="dayCountSun" class="text-[11px] px-1.5 py-0.5 rounded bg-stone-100 dark:bg-[#282828] text-stone-500">0/6</span>
+          </div>
+          <div id="dayListSun" class="space-y-2"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notion Tip / Study Strategy Callout Box -->
+    <div class="mt-8 p-4 rounded-xl bg-stone-100/80 dark:bg-[#222] border border-stone-200 dark:border-[#2e2e2e] flex items-start gap-3 text-xs sm:text-sm text-stone-700 dark:text-stone-300">
+      <span class="text-xl select-none">💡</span>
+      <div>
+        <span class="font-semibold text-stone-900 dark:text-white">Study Strategy Tip:</span>
+        Pair conceptual lectures (like <em>Microeconomics 1</em> and <em>Introduction to Economics</em>) with computational and practical exercises (<em>Financial Accounting 1</em>, <em>Statistics 1</em>, <em>Mathematics 1</em>). Dedicate daily 45-minute blocks to <em>Python</em> to build muscle memory through small scripts.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MODAL: ADD / EDIT MODULE -->
+  <div id="moduleModal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-[#202020] border border-stone-200 dark:border-[#333] rounded-2xl w-full max-w-md p-6 shadow-xl transform transition-all">
+      <div class="flex items-center justify-between pb-3 border-b border-stone-100 dark:border-[#2d2d2d] mb-4">
+        <h3 id="modalTitle" class="text-lg font-bold text-stone-900 dark:text-white">Add New Subject</h3>
+        <button id="closeModalBtn" type="button" class="p-1 rounded-lg text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 transition">✕</button>
+      </div>
+
+      <form id="moduleForm" class="space-y-4 text-xs sm:text-sm">
+        <input type="hidden" id="moduleIdInput">
+        
+        <div class="grid grid-cols-4 gap-2">
+          <div class="col-span-1">
+            <label class="block text-stone-600 dark:text-stone-400 font-medium mb-1" for="moduleIconInput">Icon</label>
+            <input type="text" id="moduleIconInput" value="📖" maxlength="2" class="w-full text-center text-lg p-2 rounded-lg border border-stone-200 dark:border-[#333] bg-stone-50 dark:bg-[#282828] text-stone-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-stone-400">
+          </div>
+          <div class="col-span-3">
+            <label class="block text-stone-600 dark:text-stone-400 font-medium mb-1" for="moduleArabicInput">Arabic Name / اسم المادة</label>
+            <input type="text" id="moduleArabicInput" required placeholder="e.g. قانون الأعمال" class="w-full p-2.5 rounded-lg border border-stone-200 dark:border-[#333] bg-stone-50 dark:bg-[#282828] text-stone-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-stone-400 font-arabic">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-stone-600 dark:text-stone-400 font-medium mb-1" for="moduleEnglishInput">English Translation / Title</label>
+          <input type="text" id="moduleEnglishInput" required placeholder="e.g. Business Law" class="w-full p-2.5 rounded-lg border border-stone-200 dark:border-[#333] bg-stone-50 dark:bg-[#282828] text-stone-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-stone-400">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-stone-600 dark:text-stone-400 font-medium mb-1" for="moduleCategoryInput">Category Tag</label>
+            <select id="moduleCategoryInput" class="w-full p-2.5 rounded-lg border border-stone-200 dark:border-[#333] bg-stone-50 dark:bg-[#282828] text-stone-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-stone-400">
+              <option value="Economics">Economics</option>
+              <option value="Quantitative">Quantitative</option>
+              <option value="Finance">Finance</option>
+              <option value="Tech">Tech / Coding</option>
+              <option value="General">General</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-stone-600 dark:text-stone-400 font-medium mb-1" for="moduleTargetInput">Weekly Goal (Hours)</label>
+            <input type="number" id="moduleTargetInput" step="0.5" min="1" max="40" value="4" class="w-full p-2.5 rounded-lg border border-stone-200 dark:border-[#333] bg-stone-50 dark:bg-[#282828] text-stone-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-stone-400">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-stone-600 dark:text-stone-400 font-medium mb-1" for="moduleNotesInput">Key Topics / TD Notes</label>
+          <textarea id="moduleNotesInput" rows="2" placeholder="e.g. Series 1 exercises, Chapter 2 summary..." class="w-full p-2.5 rounded-lg border border-stone-200 dark:border-[#333] bg-stone-50 dark:bg-[#282828] text-stone-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-stone-400"></textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-stone-100 dark:border-[#2d2d2d]">
+          <button type="button" id="cancelModalBtn" class="px-4 py-2 rounded-lg border border-stone-200 dark:border-[#333] text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-[#282828] font-medium transition">Cancel</button>
+          <button type="submit" id="saveModuleBtn" class="px-4 py-2 rounded-lg bg-stone-900 text-white dark:bg-white dark:text-stone-900 font-medium hover:bg-stone-800 dark:hover:bg-stone-100 transition">Save Subject</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: POMODORO FOCUS TIMER -->
+  <div id="timerModal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-[#202020] border border-stone-200 dark:border-[#333] rounded-2xl w-full max-w-sm p-6 shadow-xl text-center">
+      <div class="flex items-center justify-between pb-3 border-b border-stone-100 dark:border-[#2d2d2d] mb-4">
+        <div class="flex items-center gap-1.5 font-bold text-stone-900 dark:text-white text-base">
+          <span>⏱️</span>
+          <span>Focus Study Timer</span>
+        </div>
+        <button id="closeTimerModalBtn" type="button" class="p-1 rounded-lg text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 transition">✕</button>
+      </div>
+
+      <!-- Mode selection (Pomodoro / Break) -->
+      <div class="flex p-1 rounded-lg bg-stone-100 dark:bg-[#2a2a2a] text-xs font-medium mb-5">
+        <button id="timerMode25" type="button" class="timer-mode-btn flex-1 py-1.5 rounded-md bg-white dark:bg-[#333] text-stone-900 dark:text-white shadow-sm transition">Pomodoro (25m)</button>
+        <button id="timerMode5" type="button" class="timer-mode-btn flex-1 py-1.5 rounded-md text-stone-500 hover:text-stone-900 dark:hover:text-white transition">Break (5m)</button>
+      </div>
+
+      <!-- Large Timer Display -->
+      <div id="timerDisplay" class="text-5xl font-mono font-bold tracking-wider text-stone-900 dark:text-white my-4 select-none">
+        25:00
+      </div>
+
+      <!-- Module Selector to log time to -->
+      <div class="mb-5 text-left">
+        <label class="block text-xs text-stone-500 dark:text-stone-400 font-medium mb-1" for="timerModuleSelect">Studying Subject:</label>
+        <select id="timerModuleSelect" class="w-full p-2 text-xs rounded-lg border border-stone-200 dark:border-[#333] bg-stone-50 dark:bg-[#252525] text-stone-800 dark:text-stone-200 focus:outline-none">
+          <!-- Populated from modules list -->
+        </select>
+      </div>
+
+      <!-- Timer Controls -->
+      <div class="flex items-center justify-center gap-3">
+        <button id="timerToggleBtn" type="button" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-sm transition">
+          Start Focus
+        </button>
+        <button id="timerResetBtn" type="button" class="p-2.5 rounded-xl border border-stone-200 dark:border-[#333] text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-[#2a2a2a] transition" title="Reset">
+          ↺
+        </button>
+      </div>
+
+      <p class="text-[11px] text-stone-400 dark:text-stone-500 mt-4">
+        Completing a 25m session automatically adds +0.5h to your selected module!
+      </p>
+    </div>
+  </div>
+
+  <!-- MODAL: CONFIRM RESET WEEK -->
+  <div id="resetConfirmModal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-[#202020] border border-stone-200 dark:border-[#333] rounded-2xl w-full max-w-sm p-5 shadow-xl text-center">
+      <div class="text-3xl mb-2">⚠️</div>
+      <h3 class="text-base font-bold text-stone-900 dark:text-white">Reset This Week?</h3>
+      <p class="text-xs text-stone-600 dark:text-stone-400 mt-1 mb-5">
+        This will clear all daily checkboxes and reset logged study hours for the new week. Your subject list and notes will remain untouched.
+      </p>
+      <div class="flex items-center justify-center gap-2">
+        <button id="cancelResetBtn" type="button" class="px-4 py-2 text-xs rounded-lg border border-stone-200 dark:border-[#333] text-stone-700 dark:text-stone-300 font-medium hover:bg-stone-50 dark:hover:bg-[#282828] transition">Cancel</button>
+        <button id="confirmResetBtn" type="button" class="px-4 py-2 text-xs rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium shadow-sm transition">Yes, Start New Week</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: EXPORT DATA -->
+  <div id="exportModal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-[#202020] border border-stone-200 dark:border-[#333] rounded-2xl w-full max-w-lg p-5 shadow-xl">
+      <div class="flex items-center justify-between pb-3 border-b border-stone-100 dark:border-[#2d2d2d] mb-3">
+        <h3 class="text-base font-bold text-stone-900 dark:text-white">Export Study Summary</h3>
+        <button id="closeExportModalBtn" type="button" class="p-1 rounded-lg text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 transition">✕</button>
+      </div>
+      <p class="text-xs text-stone-500 dark:text-stone-400 mb-2">You can copy your study log summary as Markdown for your notes or Notion page:</p>
+      <textarea id="exportTextarea" rows="8" readonly class="w-full p-2.5 text-xs font-mono rounded-lg border border-stone-200 dark:border-[#333] bg-stone-50 dark:bg-[#252525] text-stone-800 dark:text-stone-200 focus:outline-none"></textarea>
+      <div class="flex items-center justify-end gap-2 mt-3">
+        <button id="copyExportBtn" type="button" class="px-4 py-1.5 text-xs rounded-lg bg-stone-900 text-white dark:bg-white dark:text-stone-900 font-medium transition">Copy to Clipboard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- JAVASCRIPT APPLICATION LOGIC -->
+  <script>
+    // Initial Default Modules based on User's attached curriculum table + Python
+    const DEFAULT_MODULES = [
+      {
+        id: 'mod-1',
+        icon: '🏛️',
+        arabicName: 'مدخل للاقتصاد',
+        englishName: 'Introduction to Economics',
+        category: 'Economics',
+        categoryClass: 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300',
+        targetHours: 4.5,
+        loggedHours: 0,
+        status: 'In Progress',
+        days: { mon: false, tue: false, wed: false, thu: false, fri: false, sat: false, sun: false },
+        notes: 'Basic economic concepts, needs vs resources, macro vs micro principles.'
+      },
+      {
+        id: 'mod-2',
+        icon: '📊',
+        arabicName: 'إحصاء 1',
+        englishName: 'Statistics 1',
+        category: 'Quantitative',
+        categoryClass: 'bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300',
+        targetHours: 5.0,
+        loggedHours: 0,
+        status: 'In Progress',
+        days: { mon: false, tue: false, wed: false, thu: false, fri: false, sat: false, sun: false },
+        notes: 'Descriptive stats, frequency distributions, mean, median, variance, TD series.'
+      },
+      {
+        id: 'mod-3',
+        icon: '📉',
+        arabicName: 'اقتصاد جزئي 1',
+        englishName: 'Microeconomics 1',
+        category: 'Economics',
+        categoryClass: 'bg-purple-100 text-purple-800 dark:bg-purple-950/60 dark:text-purple-300',
+        targetHours: 5.0,
+        loggedHours: 0,
+        status: 'Not Started',
+        days: { mon: false, tue: false, wed: false, thu: false, fri: false, sat: false, sun: false },
+        notes: 'Consumer behavior theory, utility curves, budget constraint, price elasticity.'
+      },
+      {
+        id: 'mod-4',
+        icon: '💰',
+        arabicName: 'المحاسبة المالية 1',
+        englishName: 'Financial Accounting 1',
+        category: 'Finance',
+        categoryClass: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300',
+        targetHours: 5.0,
+        loggedHours: 0,
+        status: 'In Progress',
+        days: { mon: false, tue: false, wed: false, thu: false, fri: false, sat: false, sun: false },
+        notes: 'Balance sheet, income statement, debit/credit mechanisms, journal entries.'
+      },
+      {
+        id: 'mod-5',
+        icon: '📐',
+        arabicName: 'رياضيات 1',
+        englishName: 'Mathematics 1',
+        category: 'Quantitative',
+        categoryClass: 'bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300',
+        targetHours: 4.5,
+        loggedHours: 0,
+        status: 'Not Started',
+        days: { mon: false, tue: false, wed: false, thu: false, fri: false, sat: false, sun: false },
+        notes: 'Real functions, limits, derivatives, matrices, linear algebra fundamentals.'
+      },
+      {
+        id: 'mod-6',
+        icon: '🐍',
+        arabicName: 'بايثون (Python)',
+        englishName: 'Python Programming',
+        category: 'Tech',
+        categoryClass: 'bg-teal-100 text-teal-800 dark:bg-teal-950/60 dark:text-teal-300',
+        targetHours: 4.0,
+        loggedHours: 0,
+        status: 'In Progress',
+        days: { mon: false, tue: false, wed: false, thu: false, fri: false, sat: false, sun: false },
+        notes: 'Variables, loops, lists, dictionaries, functions, and solving economic equations.'
+      }
+    ];
+
+    // State
+    let modules = [];
+    let currentFilter = '';
+    let currentView = 'table'; // 'table' | 'board' | 'schedule'
+    let editingModuleId = null;
+
+    // Timer state
+    let timerDuration = 25 * 60;
+    let timerRemaining = 25 * 60;
+    let timerInterval = null;
+    let timerIsRunning = false;
+
+    // Audio chime using Web Audio API
+    function playBeep(freq = 587.33, duration = 0.25) {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        // audio might be blocked until gesture, gracefully ignored
+      }
+    }
+
+    // Local Storage Helpers
+    function loadSavedData() {
+      try {
+        const saved = localStorage.getItem('notion_study_tracker_data');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            modules = parsed;
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('LocalStorage load failed', e);
+      }
+      modules = JSON.parse(JSON.stringify(DEFAULT_MODULES));
+    }
+
+    function persistData() {
+      try {
+        localStorage.setItem('notion_study_tracker_data', JSON.stringify(modules));
+      } catch (e) {
+        console.warn('LocalStorage save failed', e);
+      }
+      updateMetrics();
+    }
+
+    // Toast Notification
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'px-4 py-2.5 rounded-xl shadow-lg border text-xs font-medium transition-all transform duration-200 pointer-events-auto ' + 
+        (type === 'success' 
+          ? 'bg-emerald-600 text-white border-emerald-500' 
+          : 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 border-stone-800');
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(8px)';
+        setTimeout(() => toast.remove(), 250);
+      }, 2500);
+    }
+
+    // Theme Management
+    function initTheme() {
+      const isDark = localStorage.getItem('study_tracker_dark') === 'true' || 
+        (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+        document.getElementById('themeIcon').textContent = '☀️';
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.getElementById('themeIcon').textContent = '🌙';
+      }
+    }
+
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      document.getElementById('themeIcon').textContent = isDark ? '☀️' : '🌙';
+      try {
+        localStorage.setItem('study_tracker_dark', isDark);
+      } catch (e) {}
+    }
+
+    // Metrics Calculator
+    function updateMetrics() {
+      let totalTarget = 0;
+      let totalLogged = 0;
+      let totalDaysChecked = 0;
+      let maxPossibleDays = modules.length * 7;
+      let completedCount = 0;
+      let inProgressCount = 0;
+
+      const activeDaysSet = new Set();
+      const dayFrequency = { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0, sun: 0 };
+
+      modules.forEach(m => {
+        totalTarget += Number(m.targetHours) || 0;
+        totalLogged += Number(m.loggedHours) || 0;
+        if (m.status === 'Completed') completedCount++;
+        else inProgressCount++;
+
+        if (m.days) {
+          Object.keys(dayFrequency).forEach(d => {
+            if (m.days[d]) {
+              totalDaysChecked++;
+              activeDaysSet.add(d);
+              dayFrequency[d]++;
+            }
+          });
+        }
+      });
+
+      // Percent of target hours completed
+      const percent = totalTarget > 0 ? Math.min(100, Math.round((totalLogged / totalTarget) * 100)) : 0;
+      
+      document.getElementById('metricProgressPercent').textContent = percent + '%';
+      document.getElementById('metricCompletedTasks').textContent = totalDaysChecked + '/' + maxPossibleDays + ' days checked';
+      document.getElementById('metricProgressBar').style.width = percent + '%';
+      
+      document.getElementById('metricLoggedHours').textContent = totalLogged.toFixed(1) + 'h';
+      document.getElementById('metricTargetHours').textContent = '/ ' + totalTarget.toFixed(0) + 'h goal';
+      
+      const remain = Math.max(0, totalTarget - totalLogged);
+      document.getElementById('metricHoursRemain').textContent = remain.toFixed(1) + 'h remaining';
+
+      document.getElementById('metricActiveDays').textContent = activeDaysSet.size + ' / 7';
+      
+      // Best day
+      let bestDay = 'Ready to start';
+      let maxDayCount = 0;
+      const dayNames = { mon: 'Mon', tue: 'Tue', wed: 'Wed', thu: 'Thu', fri: 'Fri', sat: 'Sat', sun: 'Sun' };
+      Object.entries(dayFrequency).forEach(([day, count]) => {
+        if (count > maxDayCount) {
+          maxDayCount = count;
+          bestDay = 'Most active: ' + dayNames[day];
+        }
+      });
+      document.getElementById('metricTopDay').textContent = maxDayCount > 0 ? bestDay : 'Ready to start';
+
+      document.getElementById('metricDoneCount').textContent = completedCount;
+      document.getElementById('metricTotalCount').textContent = '/ ' + modules.length + ' subjects';
+      document.getElementById('metricInProgressCount').textContent = inProgressCount + ' active / in progress';
+
+      // Update Column Counts in Board View
+      const counts = { 'Not Started': 0, 'In Progress': 0, 'Reviewing': 0, 'Completed': 0 };
+      modules.forEach(m => {
+        if (counts[m.status] !== undefined) counts[m.status]++;
+      });
+      document.getElementById('colCountNotStarted').textContent = counts['Not Started'];
+      document.getElementById('colCountInProgress').textContent = counts['In Progress'];
+      document.getElementById('colCountReviewing').textContent = counts['Reviewing'];
+      document.getElementById('colCountCompleted').textContent = counts['Completed'];
+
+      // Update Table Footer Count
+      document.getElementById('tableSummaryCount').textContent = modules.length + ' modules tracked';
+    }
+
+    // Render Table View
+    function renderTableView() {
+      const tbody = document.getElementById('modulesTableBody');
+      tbody.innerHTML = '';
+
+      const filtered = modules.filter(m => {
+        if (!currentFilter) return true;
+        const q = currentFilter.toLowerCase();
+        return m.englishName.toLowerCase().includes(q) || 
+               m.arabicName.toLowerCase().includes(q) || 
+               m.category.toLowerCase().includes(q);
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="13" class="py-8 text-center text-stone-400 dark:text-stone-500">
+              No subjects matching "${currentFilter}"
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      filtered.forEach(mod => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-stone-50/70 dark:hover:bg-[#262626] transition-colors group';
+
+        const progressPercent = mod.targetHours > 0 ? Math.min(100, Math.round((mod.loggedHours / mod.targetHours) * 100)) : 0;
+        
+        // Status badge color
+        let statusBadgeClass = 'bg-stone-100 text-stone-700 dark:bg-stone-800 dark:text-stone-300';
+        if (mod.status === 'In Progress') statusBadgeClass = 'bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300';
+        else if (mod.status === 'Reviewing') statusBadgeClass = 'bg-purple-100 text-purple-800 dark:bg-purple-950/60 dark:text-purple-300';
+        else if (mod.status === 'Completed') statusBadgeClass = 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300';
+
+        tr.innerHTML = `
+          <!-- Module Title & Category -->
+          <td class="py-3 px-4">
+            <div class="flex items-start gap-2.5">
+              <span class="text-xl select-none mt-0.5">${mod.icon}</span>
+              <div>
+                <div class="font-semibold text-stone-900 dark:text-white flex items-center gap-1.5 flex-wrap">
+                  <span class="font-arabic text-sm">${mod.arabicName}</span>
+                  <span class="text-xs text-stone-500 dark:text-stone-400 font-normal">(${mod.englishName})</span>
+                </div>
+                <div class="flex items-center gap-1.5 mt-0.5">
+                  <span class="notion-tag text-[10px] ${mod.categoryClass || 'bg-stone-100 text-stone-700'}">${mod.category}</span>
+                  ${mod.notes ? `<span class="text-[11px] text-stone-400 dark:text-stone-500 truncate max-w-[200px]" title="${mod.notes}">• ${mod.notes}</span>` : ''}
+                </div>
+              </div>
+            </div>
+          </td>
+
+          <!-- Status Pill (Clickable cycle) -->
+          <td class="py-3 px-3">
+            <button type="button" data-action="cycle-status" data-id="${mod.id}" class="notion-tag ${statusBadgeClass} hover:opacity-80 transition cursor-pointer" title="Click to cycle status">
+              ${mod.status}
+            </button>
+          </td>
+
+          <!-- Target Hours -->
+          <td class="py-3 px-3 text-center font-mono text-xs text-stone-600 dark:text-stone-400">
+            ${mod.targetHours}h
+          </td>
+
+          <!-- Days Mon - Sun Checkboxes -->
+          ${['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map(day => `
+            <td class="py-3 px-2 text-center">
+              <input type="checkbox" data-action="toggle-day" data-id="${mod.id}" data-day="${day}" ${mod.days && mod.days[day] ? 'checked' : ''} class="w-4 h-4 rounded border-stone-300 dark:border-[#444] text-blue-600 focus:ring-blue-500 dark:bg-[#282828] cursor-pointer">
+            </td>
+          `).join('')}
+
+          <!-- Logged Hours with Stepper -->
+          <td class="py-3 px-3 text-center">
+            <div class="inline-flex items-center gap-1 bg-stone-100 dark:bg-[#282828] rounded-lg p-1 border border-stone-200 dark:border-[#383838]">
+              <button type="button" data-action="dec-hour" data-id="${mod.id}" class="w-5 h-5 flex items-center justify-center rounded text-stone-500 hover:bg-white dark:hover:bg-[#333] transition text-xs font-bold">-</button>
+              <span class="font-mono font-medium text-xs px-1 text-stone-800 dark:text-stone-200">${mod.loggedHours.toFixed(1)}h</span>
+              <button type="button" data-action="inc-hour" data-id="${mod.id}" class="w-5 h-5 flex items-center justify-center rounded text-stone-500 hover:bg-white dark:hover:bg-[#333] transition text-xs font-bold">+</button>
+            </div>
+          </td>
+
+          <!-- Progress Bar -->
+          <td class="py-3 px-3">
+            <div class="flex items-center gap-2">
+              <div class="w-full bg-stone-100 dark:bg-[#333] h-2 rounded-full overflow-hidden">
+                <div class="h-2 rounded-full ${progressPercent >= 100 ? 'bg-emerald-500' : 'bg-blue-600'} transition-all" style="width: ${progressPercent}%"></div>
+              </div>
+              <span class="font-mono text-[11px] text-stone-500 dark:text-stone-400 w-8 text-right">${progressPercent}%</span>
+            </div>
+          </td>
+
+          <!-- Actions (Edit / Delete) -->
+          <td class="py-3 px-3 text-center">
+            <div class="inline-flex items-center gap-1 opacity-70 group-hover:opacity-100 transition">
+              <button type="button" data-action="edit-module" data-id="${mod.id}" class="p-1 rounded text-stone-500 hover:text-stone-900 dark:hover:text-white hover:bg-stone-100 dark:hover:bg-[#333]" title="Edit Details">
+                ✏️
+              </button>
+              <button type="button" data-action="delete-module" data-id="${mod.id}" class="p-1 rounded text-stone-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-stone-100 dark:hover:bg-[#333]" title="Delete Subject">
+                🗑️
+              </button>
+            </div>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Render Board View
+    function renderBoardView() {
+      const cols = {
+        'Not Started': document.getElementById('boardColNotStarted'),
+        'In Progress': document.getElementById('boardColInProgress'),
+        'Reviewing': document.getElementById('boardColReviewing'),
+        'Completed': document.getElementById('boardColCompleted')
+      };
+
+      Object.values(cols).forEach(col => col.innerHTML = '');
+
+      modules.forEach(mod => {
+        const card = document.createElement('div');
+        card.className = 'bg-white dark:bg-[#282828] rounded-xl p-3.5 border border-stone-200/80 dark:border-[#383838] shadow-sm hover:shadow transition';
+
+        const percent = mod.targetHours > 0 ? Math.min(100, Math.round((mod.loggedHours / mod.targetHours) * 100)) : 0;
+        const daysCheckedCount = Object.values(mod.days || {}).filter(Boolean).length;
+
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-2 mb-2">
+            <span class="text-2xl">${mod.icon}</span>
+            <span class="notion-tag text-[10px] ${mod.categoryClass || 'bg-stone-100 text-stone-700'}">${mod.category}</span>
+          </div>
+
+          <div class="font-bold text-sm text-stone-900 dark:text-white font-arabic">${mod.arabicName}</div>
+          <div class="text-xs text-stone-500 dark:text-stone-400 mb-2">${mod.englishName}</div>
+
+          ${mod.notes ? `<p class="text-[11px] text-stone-500 dark:text-stone-400 bg-stone-50 dark:bg-[#232323] p-1.5 rounded mb-3 line-clamp-2">${mod.notes}</p>` : ''}
+
+          <div class="space-y-1.5 text-xs text-stone-600 dark:text-stone-400 pt-2 border-t border-stone-100 dark:border-[#333]">
+            <div class="flex justify-between items-center text-[11px]">
+              <span>Studied: <strong class="text-stone-800 dark:text-stone-200">${mod.loggedHours}h</strong> / ${mod.targetHours}h</span>
+              <span class="font-mono">${percent}%</span>
+            </div>
+            <div class="w-full bg-stone-100 dark:bg-[#333] h-1.5 rounded-full overflow-hidden">
+              <div class="h-1.5 rounded-full ${percent >= 100 ? 'bg-emerald-500' : 'bg-blue-600'}" style="width: ${percent}%"></div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between mt-3 pt-2 border-t border-stone-100 dark:border-[#333]">
+            <span class="text-[11px] text-stone-400">${daysCheckedCount}/7 active days</span>
+            <button type="button" data-action="cycle-status" data-id="${mod.id}" class="text-xs text-blue-600 dark:text-blue-400 hover:underline">
+              Shift Status →
+            </button>
+          </div>
+        `;
+
+        if (cols[mod.status]) {
+          cols[mod.status].appendChild(card);
+        } else {
+          cols['In Progress'].appendChild(card);
+        }
+      });
+    }
+
+    // Render Weekly Schedule View
+    function renderScheduleView() {
+      const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+      const capDays = { mon: 'Mon', tue: 'Tue', wed: 'Wed', thu: 'Thu', fri: 'Fri', sat: 'Sat', sun: 'Sun' };
+
+      days.forEach(day => {
+        const container = document.getElementById('dayList' + capDays[day]);
+        const countSpan = document.getElementById('dayCount' + capDays[day]);
+        if (!container) return;
+        container.innerHTML = '';
+
+        let checkedCount = 0;
+
+        modules.forEach(mod => {
+          const isDone = mod.days && mod.days[day];
+          if (isDone) checkedCount++;
+
+          const item = document.createElement('div');
+          item.className = 'p-2 rounded-lg border text-xs flex items-center justify-between gap-1.5 transition ' + 
+            (isDone 
+              ? 'bg-blue-50/70 border-blue-200/80 dark:bg-blue-950/30 dark:border-blue-900/40 text-blue-950 dark:text-blue-200' 
+              : 'bg-stone-50/60 border-stone-200/60 dark:bg-[#252525] dark:border-[#333] text-stone-700 dark:text-stone-300');
+
+          item.innerHTML = `
+            <div class="flex items-center gap-1.5 truncate">
+              <span>${mod.icon}</span>
+              <span class="font-medium truncate font-arabic">${mod.arabicName}</span>
+            </div>
+            <input type="checkbox" data-action="toggle-day" data-id="${mod.id}" data-day="${day}" ${isDone ? 'checked' : ''} class="w-4 h-4 rounded border-stone-300 dark:border-[#444] text-blue-600 focus:ring-blue-500 cursor-pointer flex-shrink-0">
+          `;
+
+          container.appendChild(item);
+        });
+
+        if (countSpan) countSpan.textContent = checkedCount + '/' + modules.length;
+      });
+    }
+
+    // Switch Views
+    function switchView(viewName) {
+      currentView = viewName;
+      document.querySelectorAll('.view-tab-btn').forEach(btn => {
+        btn.classList.remove('bg-white', 'dark:bg-[#2c2c2c]', 'text-stone-900', 'dark:text-white', 'shadow-sm');
+        btn.classList.add('text-stone-600', 'dark:text-stone-400');
+      });
+
+      document.querySelectorAll('.view-container').forEach(el => el.classList.add('hidden'));
+
+      if (viewName === 'table') {
+        document.getElementById('viewTableBtn').classList.add('bg-white', 'dark:bg-[#2c2c2c]', 'text-stone-900', 'dark:text-white', 'shadow-sm');
+        document.getElementById('tableView').classList.remove('hidden');
+        renderTableView();
+      } else if (viewName === 'board') {
+        document.getElementById('viewBoardBtn').classList.add('bg-white', 'dark:bg-[#2c2c2c]', 'text-stone-900', 'dark:text-white', 'shadow-sm');
+        document.getElementById('boardView').classList.remove('hidden');
+        renderBoardView();
+      } else if (viewName === 'schedule') {
+        document.getElementById('viewScheduleBtn').classList.add('bg-white', 'dark:bg-[#2c2c2c]', 'text-stone-900', 'dark:text-white', 'shadow-sm');
+        document.getElementById('scheduleView').classList.remove('hidden');
+        renderScheduleView();
+      }
+    }
+
+    // Populate Timer Module Dropdown
+    function populateTimerSelect() {
+      const select = document.getElementById('timerModuleSelect');
+      select.innerHTML = '';
+      modules.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m.id;
+        opt.textContent = `${m.icon} ${m.arabicName} (${m.englishName})`;
+        select.appendChild(opt);
+      });
+    }
+
+    // Timer Logic
+    function updateTimerDisplay() {
+      const m = Math.floor(timerRemaining / 60);
+      const s = timerRemaining % 60;
+      document.getElementById('timerDisplay').textContent = 
+        String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    }
+
+    function toggleTimer() {
+      const btn = document.getElementById('timerToggleBtn');
+      if (timerIsRunning) {
+        clearInterval(timerInterval);
+        timerIsRunning = false;
+        btn.textContent = 'Resume Focus';
+        btn.className = 'px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-sm transition';
+      } else {
+        timerIsRunning = true;
+        btn.textContent = 'Pause';
+        btn.className = 'px-6 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-semibold text-sm shadow-sm transition';
+        playBeep(440, 0.1);
+
+        timerInterval = setInterval(() => {
+          if (timerRemaining > 0) {
+            timerRemaining--;
+            updateTimerDisplay();
+          } else {
+            clearInterval(timerInterval);
+            timerIsRunning = false;
+            btn.textContent = 'Start Focus';
+            btn.className = 'px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-sm transition';
+            
+            // Session completed: gentle chime
+            playBeep(880, 0.5);
+
+            // Log +0.5h to chosen module if Pomodoro mode
+            const targetModId = document.getElementById('timerModuleSelect').value;
+            const targetMod = modules.find(m => m.id === targetModId);
+            if (targetMod) {
+              targetMod.loggedHours = Math.round((targetMod.loggedHours + 0.5) * 10) / 10;
+              persistData();
+              refreshCurrentView();
+              showToast(`🎉 Focus complete! Added +0.5h to ${targetMod.englishName}`, 'success');
+            }
+          }
+        }, 1000);
+      }
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      timerIsRunning = false;
+      timerRemaining = timerDuration;
+      document.getElementById('timerToggleBtn').textContent = 'Start Focus';
+      document.getElementById('timerToggleBtn').className = 'px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-sm transition';
+      updateTimerDisplay();
+    }
+
+    function setTimerMode(minutes) {
+      clearInterval(timerInterval);
+      timerIsRunning = false;
+      timerDuration = minutes * 60;
+      timerRemaining = timerDuration;
+      document.getElementById('timerToggleBtn').textContent = 'Start Focus';
+      document.getElementById('timerToggleBtn').className = 'px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-sm transition';
+      
+      document.querySelectorAll('.timer-mode-btn').forEach(btn => {
+        btn.classList.remove('bg-white', 'dark:bg-[#333]', 'text-stone-900', 'dark:text-white', 'shadow-sm');
+        btn.classList.add('text-stone-500');
+      });
+
+      if (minutes === 25) {
+        document.getElementById('timerMode25').classList.add('bg-white', 'dark:bg-[#333]', 'text-stone-900', 'dark:text-white', 'shadow-sm');
+      } else {
+        document.getElementById('timerMode5').classList.add('bg-white', 'dark:bg-[#333]', 'text-stone-900', 'dark:text-white', 'shadow-sm');
+      }
+
+      updateTimerDisplay();
+    }
+
+    // Helper: Refresh currently active view
+    function refreshCurrentView() {
+      if (currentView === 'table') renderTableView();
+      else if (currentView === 'board') renderBoardView();
+      else if (currentView === 'schedule') renderScheduleView();
+    }
+
+    // Action Handlers via Event Delegation
+    document.addEventListener('click', function(e) {
+      const target = e.target.closest('[data-action]');
+      if (!target) return;
+
+      const action = target.getAttribute('data-action');
+      const id = target.getAttribute('data-id');
+      const mod = modules.find(m => m.id === id);
+
+      if (action === 'cycle-status' && mod) {
+        const order = ['Not Started', 'In Progress', 'Reviewing', 'Completed'];
+        const nextIdx = (order.indexOf(mod.status) + 1) % order.length;
+        mod.status = order[nextIdx];
+        persistData();
+        refreshCurrentView();
+        showToast(`Status updated to "${mod.status}" for ${mod.englishName}`);
+      }
+      else if (action === 'inc-hour' && mod) {
+        mod.loggedHours = Math.round((mod.loggedHours + 0.5) * 10) / 10;
+        persistData();
+        refreshCurrentView();
+      }
+      else if (action === 'dec-hour' && mod) {
+        mod.loggedHours = Math.max(0, Math.round((mod.loggedHours - 0.5) * 10) / 10);
+        persistData();
+        refreshCurrentView();
+      }
+      else if (action === 'delete-module' && mod) {
+        modules = modules.filter(m => m.id !== id);
+        persistData();
+        populateTimerSelect();
+        refreshCurrentView();
+        showToast(`Deleted ${mod.englishName}`);
+      }
+      else if (action === 'edit-module' && mod) {
+        openEditModal(mod);
+      }
+    });
+
+    // Checkbox toggle handler
+    document.addEventListener('change', function(e) {
+      if (e.target.getAttribute('data-action') === 'toggle-day') {
+        const id = e.target.getAttribute('data-id');
+        const day = e.target.getAttribute('data-day');
+        const mod = modules.find(m => m.id === id);
+        if (mod && mod.days) {
+          mod.days[day] = e.target.checked;
+          if (e.target.checked) {
+            playBeep(659.25, 0.12);
+          }
+          persistData();
+          // Update corresponding checkmarks in other views without full reload
+          updateMetrics();
+          if (currentView === 'schedule') renderScheduleView();
+        }
+      }
+    });
+
+    // Modal Operations
+    function openAddModal() {
+      editingModuleId = null;
+      document.getElementById('modalTitle').textContent = 'Add New Subject';
+      document.getElementById('moduleIdInput').value = '';
+      document.getElementById('moduleIconInput').value = '📖';
+      document.getElementById('moduleArabicInput').value = '';
+      document.getElementById('moduleEnglishInput').value = '';
+      document.getElementById('moduleCategoryInput').value = 'Economics';
+      document.getElementById('moduleTargetInput').value = '4';
+      document.getElementById('moduleNotesInput').value = '';
+      document.getElementById('moduleModal').classList.remove('hidden');
+    }
+
+    function openEditModal(mod) {
+      editingModuleId = mod.id;
+      document.getElementById('modalTitle').textContent = 'Edit Subject';
+      document.getElementById('moduleIdInput').value = mod.id;
+      document.getElementById('moduleIconInput').value = mod.icon || '📖';
+      document.getElementById('moduleArabicInput').value = mod.arabicName || '';
+      document.getElementById('moduleEnglishInput').value = mod.englishName || '';
+      document.getElementById('moduleCategoryInput').value = mod.category || 'General';
+      document.getElementById('moduleTargetInput').value = mod.targetHours || 4;
+      document.getElementById('moduleNotesInput').value = mod.notes || '';
+      document.getElementById('moduleModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('moduleModal').classList.add('hidden');
+    }
+
+    // Form Submit
+    document.getElementById('moduleForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const icon = document.getElementById('moduleIconInput').value.trim() || '📖';
+      const arabic = document.getElementById('moduleArabicInput').value.trim();
+      const english = document.getElementById('moduleEnglishInput').value.trim();
+      const category = document.getElementById('moduleCategoryInput').value;
+      const target = parseFloat(document.getElementById('moduleTargetInput').value) || 4;
+      const notes = document.getElementById('moduleNotesInput').value.trim();
+
+      const catColors = {
+        Economics: 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300',
+        Quantitative: 'bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300',
+        Finance: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300',
+        Tech: 'bg-teal-100 text-teal-800 dark:bg-teal-950/60 dark:text-teal-300',
+        General: 'bg-stone-100 text-stone-800 dark:bg-stone-800 dark:text-stone-300'
+      };
+
+      if (editingModuleId) {
+        const mod = modules.find(m => m.id === editingModuleId);
+        if (mod) {
+          mod.icon = icon;
+          mod.arabicName = arabic;
+          mod.englishName = english;
+          mod.category = category;
+          mod.categoryClass = catColors[category] || catColors.General;
+          mod.targetHours = target;
+          mod.notes = notes;
+          showToast(`Updated ${english}`);
+        }
+      } else {
+        const newMod = {
+          id: 'mod-' + Date.now(),
+          icon: icon,
+          arabicName: arabic,
+          englishName: english,
+          category: category,
+          categoryClass: catColors[category] || catColors.General,
+          targetHours: target,
+          loggedHours: 0,
+          status: 'In Progress',
+          days: { mon: false, tue: false, wed: false, thu: false, fri: false, sat: false, sun: false },
+          notes: notes
+        };
+        modules.push(newMod);
+        showToast(`Added ${english}`);
+      }
+
+      persistData();
+      populateTimerSelect();
+      refreshCurrentView();
+      closeModal();
+    });
+
+    // Reset Week Flow
+    function openResetConfirm() {
+      document.getElementById('resetConfirmModal').classList.remove('hidden');
+    }
+    function closeResetConfirm() {
+      document.getElementById('resetConfirmModal').classList.add('hidden');
+    }
+    function executeResetWeek() {
+      modules.forEach(m => {
+        m.loggedHours = 0;
+        m.status = 'In Progress';
+        m.days = { mon: false, tue: false, wed: false, thu: false, fri: false, sat: false, sun: false };
+      });
+      persistData();
+      refreshCurrentView();
+      closeResetConfirm();
+      showToast('Weekly tracker has been reset for the new week!', 'success');
+    }
+
+    // Export Flow
+    function openExportModal() {
+      let md = '# Weekly Study Tracker Summary\n\n';
+      md += `*Generated: ${new Date().toLocaleDateString()}*\n\n`;
+      md += '| Module | Arabic | Target | Logged | Status | Notes |\n';
+      md += '|---|---|---|---|---|---|\n';
+      modules.forEach(m => {
+        md += `| ${m.icon} ${m.englishName} | ${m.arabicName} | ${m.targetHours}h | ${m.loggedHours}h | ${m.status} | ${m.notes || '-'} |\n`;
+      });
+      document.getElementById('exportTextarea').value = md;
+      document.getElementById('exportModal').classList.remove('hidden');
+    }
+    function closeExportModal() {
+      document.getElementById('exportModal').classList.add('hidden');
+    }
+    function copyExportText() {
+      const textarea = document.getElementById('exportTextarea');
+      textarea.select();
+      try {
+        navigator.clipboard.writeText(textarea.value).then(() => {
+          showToast('Markdown summary copied to clipboard!', 'success');
+        }).catch(() => {
+          document.execCommand('copy');
+          showToast('Markdown summary copied!', 'success');
+        });
+      } catch (e) {
+        document.execCommand('copy');
+        showToast('Markdown summary copied!', 'success');
+      }
+    }
+
+    // Wire Event Listeners
+    document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
+    document.getElementById('addModuleBtn').addEventListener('click', openAddModal);
+    document.getElementById('tableAddRowBtn').addEventListener('click', openAddModal);
+    document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+    document.getElementById('cancelModalBtn').addEventListener('click', closeModal);
+
+    document.getElementById('viewTableBtn').addEventListener('click', () => switchView('table'));
+    document.getElementById('viewBoardBtn').addEventListener('click', () => switchView('board'));
+    document.getElementById('viewScheduleBtn').addEventListener('click', () => switchView('schedule'));
+
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+      currentFilter = e.target.value.trim();
+      renderTableView();
+    });
+
+    document.getElementById('resetWeekBtn').addEventListener('click', openResetConfirm);
+    document.getElementById('cancelResetBtn').addEventListener('click', closeResetConfirm);
+    document.getElementById('confirmResetBtn').addEventListener('click', executeResetWeek);
+
+    document.getElementById('exportDataBtn').addEventListener('click', openExportModal);
+    document.getElementById('closeExportModalBtn').addEventListener('click', closeExportModal);
+    document.getElementById('copyExportBtn').addEventListener('click', copyExportText);
+
+    // Timer modal controls
+    document.getElementById('openTimerBtn').addEventListener('click', () => {
+      document.getElementById('timerModal').classList.remove('hidden');
+    });
+    document.getElementById('closeTimerModalBtn').addEventListener('click', () => {
+      document.getElementById('timerModal').classList.add('hidden');
+    });
+    document.getElementById('timerMode25').addEventListener('click', () => setTimerMode(25));
+    document.getElementById('timerMode5').addEventListener('click', () => setTimerMode(5));
+    document.getElementById('timerToggleBtn').addEventListener('click', toggleTimer);
+    document.getElementById('timerResetBtn').addEventListener('click', resetTimer);
+
+    // Initialization
+    window.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      loadSavedData();
+      populateTimerSelect();
+      updateMetrics();
+      renderTableView();
+    });
+  </script>
+</body>
+</html>
